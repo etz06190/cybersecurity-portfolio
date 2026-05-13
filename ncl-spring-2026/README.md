@@ -38,8 +38,8 @@ Top categories: Open Source Intelligence (98th), Log Analysis (97th), Scanning &
 
 ## What stands out
 
-Three categories were perfect or near-perfect across both games: **Scanning & Reconnaissance**, **Log Analysis**, and **Network Traffic Analysis** (300/300 in the team game). These map to the kind of work I describe in [CTF.md](../CTF.md) as feeling natural — picking apart logs and packets to find the thing that doesn't belong. The scorecards back that up.
+Three categories were perfect or near-perfect across both games: **Scanning & Reconnaissance**, **Log Analysis**, and **Network Traffic Analysis** (300/300 in the team game). These map to the kind of work I describe in [CTF.md](../CTF.md) as feeling natural: picking apart logs and packets to find the thing that doesn't belong. The scorecards back that up.
 
-Password Cracking was my weakest individual category — 74th percentile, 31.6% completion. I cleared the easy hash identification and best64 challenges, then bombed everything medium and up. Accuracy reads 100% because I never submitted a guess, but the completion number tells the real story.
+Password Cracking was my weakest individual category, 74th percentile, 31.6% completion. I cleared the easy hash identification and best64 challenges, then bombed everything medium and up. Accuracy reads 100% because I never submitted a guess, but the completion number tells the real story.
 
-The 7-percentile jump from individual to team game is worth a note. Working with teammates meant I could spend my time on categories I'm strong in (log analysis, network traffic, OSINT) while teammates covered the rest. The takeaway isn't about the score — it's about how I work best in a team where roles are clear, which is the same way SOC tier triage actually runs in production.
+The 7-percentile jump from individual to team game is worth a note. Working with teammates meant I could spend my time on categories I'm strong in (log analysis, network traffic, OSINT) while teammates covered the rest. The takeaway isn't about the score, it's about how I work best in a team where roles are clear, which is the same way SOC tier triage actually runs in production.
