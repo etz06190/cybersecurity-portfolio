@@ -6,6 +6,7 @@ Notes, write-ups, and validated achievements from my work in cybersecurity. Most
 
 - **[CTF.md](./CTF.md)** — notes on competing through NCL/CyberSkyline. Strengths, weaknesses, what I've learned so far.
 - **[ncl-spring-2026/](./ncl-spring-2026/)** — scouting reports from the NCL Spring 2026 season. 90th percentile individual, 97th percentile team game. Category breakdown and verification links in the folder README.
+- **[home-soc-lab/](./home-soc-lab/)** — 13-week structured Blue Team buildout. Microsoft Sentinel SIEM, Sysmon endpoint telemetry, Zeek on Raspberry Pi, Pi-hole DNS, Cowrie honeypot, AI-assisted triage via Anthropic Claude API. Phase 1 in progress.
 
 ## Certifications
 
