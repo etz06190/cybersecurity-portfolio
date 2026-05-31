@@ -21,17 +21,43 @@ Use this file as a quick reference. The lived progress (what was hard, what surp
 
 ---
 
-## Week 2 — Sentinel Ninja L1 + KQL Basics (10 hours)
+## Week 2 — Sentinel Fundamentals + KQL Basics (10 hours)
 
-**Mission:** Complete first half of Sentinel Ninja L100, get comfortable with basic KQL, connect Azure Activity Logs, get both Pis on the network.
+**Mission:** Build core Sentinel knowledge through the current Ninja Training, get comfortable with basic KQL, connect Azure Activity Logs as your first data source, get both Raspberry Pis on the network.
 
-- [ ] Sentinel Ninja L100 modules 1-4 complete with notes
-- [ ] 20+ KQL queries documented in `queries/kql-cookbook.md`
-- [ ] Azure Activity Logs flowing into Sentinel
-- [ ] Both Pis booted, SSH key auth working, fully updated
-- [ ] Hostnames set, architecture diagram updated
+### Sentinel learning (3-4 hours)
+- [ ] Ninja Training: complete the "Onboard Microsoft Sentinel" section
+- [ ] Ninja Training: complete the "Collect data" section
+- [ ] Ninja Training: complete the introduction to "Threat detection" / Analytics rules
+- [ ] Notes captured in `notes/sentinel-ninja.md`
 
----
+### KQL practice (3-4 hours)
+- [ ] Complete Microsoft Learn path: "Write your first query with Kusto Query Language"
+- [ ] 20+ KQL queries documented in `queries/kql-cookbook.md` covering:
+  - `where`, `project`, `summarize`, `count`, `take`, `top` (basics)
+  - `bin()`, `ago()`, `between()`, `render timechart` (time-based)
+  - `extend`, `parse`, `parse_json` (parsing)
+  - Basic `join` and `let` patterns
+
+### Sentinel data connection (1-2 hours)
+- [ ] Azure Activity logs connector enabled in Sentinel
+- [ ] Data verified flowing: `AzureActivity | take 10` returns rows
+- [ ] At least 2 cookbook queries reference real `AzureActivity` data
+
+### Pi setup (2 hours)
+- [ ] Both Pi 4s booted and on home network
+- [ ] Static IP addresses assigned (.50 for sensor Pi, .51 for utility Pi)
+- [ ] SSH key auth working (password auth disabled)
+- [ ] OS fully updated
+- [ ] Hostnames set: `pi-sensor` and `pi-utility`
+- [ ] Architecture diagram updated with actual IPs
+
+### NOTE on roadmap translation
+The original roadmap referenced "L100 Module 1-4" structure from the older
+Sentinel Ninja Training (pre-October 2024). Microsoft has since reorganized
+into a single role-based blog at aka.ms/SentinelNinjaTraining. This week's
+acceptance criteria map the original intent to current Microsoft content.
+
 
 ## Week 3 — Sentinel Ninja L1 Complete + Pi-hole (10 hours)
 
