@@ -66,7 +66,43 @@ filtering and proceed in section order.
 **Time spent:** ~1 hour
 
 **Next:** Day 5 — order hardware for the lab buildout.
+### Day 9 — Azure Activity Connector
 
+Status: Complete. AzureActivity table populating with real subscription activity.
+
+What I did:
+1. Located the Azure Activity connector via Sentinel → Data connectors →
+   Content hub → Azure Activity (the Status filter on the Data Connectors
+   list was stuck and wouldn't show unconnected connectors).
+2. Launched Azure Policy Assignment wizard with subscription scope and
+   law-homesoc as the target workspace.
+3. First remediation failed: Microsoft.PolicyInsights resource provider
+   not registered. Fixed by registering it in Subscriptions → Resource
+   providers. Also registered Microsoft.Insights to be safe.
+4. Triggered new remediation. Policy compliance dashboard showed
+   non-compliant / pending for a while, but the actual diagnostic setting
+   (named subscriptionToLa) was created at the subscription level and is
+   forwarding all 8 categories to law-homesoc.
+5. Verified end-to-end: AzureActivity | take 50 returns rows with real
+   subscription activity including policy evaluations and resource
+   deployments.
+
+Key learnings:
+- Azure resource providers must be explicitly registered per subscription
+  before their features become available. PolicyInsights is required for
+  any policy remediation task. This is a one-time setup gotcha.
+- Policy compliance dashboards lag behind actual configuration state by
+  ~30 minutes. When troubleshooting, check the underlying mechanism
+  (diagnostic settings page) for ground truth, not the abstraction layer
+  (compliance scores).
+- Sentinel's Data Connectors UI has a stuck Status filter bug. Content
+  Hub is the working alternative path to install/configure connectors in
+  2026.
+- Log ingestion is not real-time. Even after configuration succeeds, data
+  takes 10-30 minutes to appear in queries. Critical operational knowledge
+  for detection engineering.
+
+Time spent: ~2 hours including troubleshooting (vs 1 hour planned).
 ---
 
 ## Template for future weeks
