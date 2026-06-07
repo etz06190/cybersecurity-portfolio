@@ -442,3 +442,123 @@ AzureActivity
 - 3-5 `join` queries (joining `SigninLogs` with `AuditLogs`, etc.)
 - More `parse_json` examples once M365 connector is online
 - First detection-style queries (looking for anomalies, not just describing data)
+
+// ===========================================================================
+// Time-series and trend analysis
+// ===========================================================================
+
+// Q27 — Activity volume over time, 15-minute buckets
+// Teaches: bin(), render timechart, summarize with time grouping
+AzureActivity
+| where TimeGenerated > ago(24h)
+| summarize event_count = count() by bin(TimeGenerated, 15m)
+| render timechart
+
+// Q28 — Activity by hour of day (find unusual time patterns)
+// Teaches: hourofday(), pattern recognition for off-hours activity
+AzureActivity
+| where TimeGenerated > ago(7d)
+| extend hour_of_day = hourofday(TimeGenerated)
+| summarize event_count = count() by hour_of_day
+| order by hour_of_day asc
+| render columnchart
+
+// Q29 — Detect activity spikes (operations 2x average)
+// Teaches: let, percentiles, comparison against baseline
+let baseline_avg = toscalar(
+    AzureActivity
+    | where TimeGenerated between (ago(7d) .. ago(1d))
+    | summarize avg_per_hour = count() / 144.0  // 144 ten-minute buckets in 24h
+);
+AzureActivity
+| where TimeGenerated > ago(1d)
+| summarize event_count = count() by bin(TimeGenerated, 10m)
+| where event_count > (baseline_avg * 2)
+| order by TimeGenerated desc
+
+// ===========================================================================
+// String parsing and extraction
+// ===========================================================================
+
+// Q30 — Extract just the operation name (last segment of OperationNameValue)
+// Teaches: split() and array indexing
+AzureActivity
+| where TimeGenerated > ago(1h)
+| extend op_name = tostring(split(OperationNameValue, "/")[-1])
+| project TimeGenerated, op_name, Caller
+| take 50
+
+// Q31 — Parse the resource provider from operations
+// Teaches: tostring, split for hierarchical strings
+AzureActivity
+| where TimeGenerated > ago(1d)
+| extend provider = tostring(split(OperationNameValue, "/")[0])
+| summarize event_count = count() by provider
+| order by event_count desc
+
+// Q32 — Parse JSON properties (works on any table with JSON columns)
+// Teaches: parse_json, dynamic typing
+AzureActivity
+| where TimeGenerated > ago(1d)
+| where isnotempty(Properties)
+| extend props = parse_json(Properties)
+| extend status_code = tostring(props.statusCode)
+| project TimeGenerated, OperationNameValue, status_code
+| where isnotempty(status_code)
+| take 20
+
+// ===========================================================================
+// Aggregation patterns common in detection
+// ===========================================================================
+
+// Q33 — Most active callers with the operations they perform
+// Teaches: make_set() to aggregate distinct values into an array
+AzureActivity
+| where TimeGenerated > ago(1d)
+| summarize 
+    total_ops = count(),
+    operations_performed = make_set(OperationNameValue, 10)
+    by Caller
+| order by total_ops desc
+| take 10
+
+// Q34 — First and last activity time per caller
+// Teaches: min(), max(), and computing duration
+AzureActivity
+| where TimeGenerated > ago(7d)
+| summarize 
+    first_seen = min(TimeGenerated),
+    last_seen = max(TimeGenerated),
+    total_ops = count()
+    by Caller
+| extend duration = last_seen - first_seen
+| order by total_ops desc
+
+// ===========================================================================
+// Detection patterns (templates for future real detections)
+// ===========================================================================
+
+// Q35 — Failed operations grouped by caller (potential auth issues or scanning)
+// Teaches: filtering by status, summarize with where
+AzureActivity
+| where TimeGenerated > ago(7d)
+| where ActivityStatusValue == "Failed"
+| summarize 
+    failure_count = count(),
+    failed_operations = make_set(OperationNameValue, 5)
+    by Caller
+| where failure_count > 3
+| order by failure_count desc
+
+// Q36 — Operations on sensitive resource types (template detection)
+// Teaches: has_any, watchlist-style filtering
+let sensitive_ops = dynamic([
+    "Microsoft.KeyVault",
+    "Microsoft.Authorization/roleAssignments",
+    "Microsoft.Authorization/policyAssignments"
+]);
+AzureActivity
+| where TimeGenerated > ago(7d)
+| where OperationNameValue has_any (sensitive_ops)
+| project TimeGenerated, OperationNameValue, Caller, ResourceGroup
+| order by TimeGenerated desc
