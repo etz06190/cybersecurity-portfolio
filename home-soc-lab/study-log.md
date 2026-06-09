@@ -103,7 +103,33 @@ Key learnings:
   for detection engineering.
 
 Time spent: ~2 hours including troubleshooting (vs 1 hour planned).
----
+
+
+### Day 11 — Sentinel Ninja Training: Architecture, Data Collection, Analytics Rules
+
+Status: Complete.
+
+What I learned:
+- The current Ninja Training is role-based (Architect / Engineer / Analyst),
+  not module-based — adapted my reading to pull from all three tracks
+- Five connector mechanisms in 2026: service-to-service, AMA, CCF,
+  Logs Ingestion API, Syslog/CEF
+- Three storage tiers with different cost/query trade-offs
+- ASIM normalizes log sources into common schemas so one detection
+  covers many sources
+- Four analytics rule types: Scheduled (90% of my work), NRT, Microsoft
+  Security, Fusion
+- Entity mapping + MITRE tagging are non-negotiable for every rule
+- Defender XDR portal is the future — Sentinel migrates there by March 2027
+
+Key insight:
+Cost optimization in Sentinel is mostly about filtering at ingest with
+DCRs. Ingestion is expensive; retention is cheap. The architectural
+choices that matter most are connector types and tier placement.
+
+Time spent: ~1.5 hours.
+
+Next: Day 12 — Pi imaging.---
 
 ## Template for future weeks
 
