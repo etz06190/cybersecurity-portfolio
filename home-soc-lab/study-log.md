@@ -130,7 +130,82 @@ choices that matter most are connector types and tier placement.
 Time spent: ~1.5 hours.
 
 Next: Day 12 — Pi imaging.---
+### pi1-sensor: complete
 
+Status: Operational. ssh pi1-sensor works from WSL with key auth.
+
+Final configuration:
+- Hostname: pi1-sensor
+- IP: 192.168.1.50 (static via nmcli; outside AT&T DHCP pool)
+- OS: Pi OS Lite 64-bit Bookworm, kernel 6.18.33
+- Network: Ethernet only, WiFi disabled
+- SSH: id_ed25519 key auth via ~/.ssh/config alias
+
+Friction overcome along the way:
+- Underpowered USB-C supply caused red-green-red boot failures; swapped to proper 5V/3A
+- WSL2 doesn't resolve .local hostnames via mDNS
+- AT&T router DHCP pool starts at .64, so .50 is in the static range
+- WSL2 regenerates /etc/hosts on restart; switched to ~/.ssh/config which survives
+- SSH keys were in WSL the whole time (id_ed25519), I just had to find them
+
+Time invested: ~5 hours across sessions
+
+Next: pi2-services imaging using the same workflow
+### pi2-services: setup complete
+
+Status: Fully operational with static IP and persistent SSH access.
+Hardware prerequisite for Week 3 Pi-hole deploy, completed early.
+
+Final state:
+- Hostname: pi2-services (corrected from mis-imaged pi2-sensor)
+- IP: 192.168.1.51 (static, via NetworkManager on the Pi, below the
+  AT&T DHCP pool start of .64 so no conflict possible)
+- Gateway: 192.168.1.254 (confirmed via `ip route | grep default`)
+- OS: Pi OS Lite 64-bit Bookworm
+- Connection profile: netplan-eth0 (netplan-generated NM profile,
+  same name as pi1 since identical hardware/onboard eth0)
+- WiFi: disabled persistently via `sudo nmcli radio wifi off`
+- SSH: ED25519 key auth working from laptop, no password required
+- SSH alias: pi2-services already present in ~/.ssh/config, points to .51
+- Persistence: confirmed surviving `wsl --shutdown` restart
+
+Friction overcome:
+- Imaged with wrong hostname (pi2-sensor). Fixed with
+  `sudo hostnamectl set-hostname pi2-services`.
+- /etc/hosts still pinned the old name on the 127.0.1.1 line
+  (duplicated: "pi2-sensor pi2-sensor"). Caused "sudo: unable to
+  resolve host" warning on every sudo. Fixed by editing to pi2-services.
+- Public key was NOT injected at imaging, so key auth failed and
+  fell back to password. Fixed with
+  `ssh-copy-id -i ~/.ssh/id_ed25519.pub pi2-services`.
+- WSL2 still cannot resolve .local mDNS, so reached the Pi at its
+  DHCP address (192.168.1.129) first, set static, then used the
+  ~/.ssh/config alias.
+
+Static IP command used:
+  sudo nmcli connection modify "netplan-eth0" \
+    ipv4.method manual \
+    ipv4.addresses 192.168.1.51/24 \
+    ipv4.gateway 192.168.1.254 \
+    ipv4.dns "192.168.1.254"
+
+Reachable via: ssh pi2-services
+
+Carry-forward notes for Week 3 Pi-hole install:
+- Use `ssh pi2-services` not pi2-services.local (WSL mDNS limitation).
+- Verify admin UI at http://192.168.1.51/admin not the .local name.
+- DNS resilience decision still open: sole resolver with tested
+  rollback (clean telemetry) vs secondary DNS on router (leaks
+  queries, blinds logging). Secondary-DNS "backup" is a trap for a
+  telemetry-focused build.
+
+Still open (Day 13 hardening, both Pis):
+- Disable SSH password auth (PasswordAuthentication no) now that key
+  auth is confirmed. pi2 proved it still accepts passwords, which is
+  exactly what should be turned off.
+
+Next: pi1/pi2 password-auth hardening, then Week 3 (Sentinel Ninja
+L100, KQL intermediate, M365 connector, Pi-hole deploy).
 ## Template for future weeks
 
 ```markdown
