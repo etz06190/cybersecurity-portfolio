@@ -206,6 +206,18 @@ Still open (Day 13 hardening, both Pis):
 
 Next: pi1/pi2 password-auth hardening, then Week 3 (Sentinel Ninja
 L100, KQL intermediate, M365 connector, Pi-hole deploy).
+
+
+Pi-hole deployed on pi2-services: per-device DNS telemetry
+
+- Gateway BGW320-500 forces its own DHCP DNS; network-wide rollout
+  rejected in favor of per-device pointing (sufficient for Week 5)
+- Laptop DNS set to 192.168.1.51 (sole resolver, no secondary, clean telemetry)
+- Upstream: Cloudflare (visibility over Quad9 upstream filtering)
+- Admin URL convention: 192.168.1.51/admin (not .local, WSL/mDNS issues)
+- DoH gotcha: browser DNS-over-HTTPS bypassed Pi-hole and froze query
+  log while browsing still worked; fixed by disabling Secure DNS in browser
+- Open: WSL resolv.conf for Kali telemetry; DoH blocklist as durable fix
 ## Template for future weeks
 
 ```markdown
